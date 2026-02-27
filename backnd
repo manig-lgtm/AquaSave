@@ -1,0 +1,168 @@
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+
+// Get a random joke from JokeAPI
+app.get('/api/joke/random', async (req, res) => {
+  try {
+    const response = await axios.get('https://v2.jokeapi.dev/joke/Any');
+    const joke = response.data;
+    
+    let jokeText;
+    if (joke.type === 'single') {
+      jokeText = joke.joke;
+    } else {
+      jokeText = `${joke.setup}\n${joke.delivery}`;
+    }
+    
+    res.json({
+      success: true,
+      joke: jokeText,
+      category: joke.category,
+      type: joke.type
+    });
+  } catch (error) {
+    console.error('Error fetching joke:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch joke',
+      error: error.message
+    });
+  }
+});
+
+// Get a joke by specific category (Any, Misc, Programming, Knock-Knock)
+app.get('/api/joke/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    const validCategories = ['any', 'misc', 'programming', 'knock-knock'];
+    
+    if (!validCategories.includes(category.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Valid categories: ${validCategories.join(', ')}`
+      });
+    }
+    
+    const response = await axios.get(`https://v2.jokeapi.dev/joke/${category}`);
+    const joke = response.data;
+    
+    let jokeText;
+    if (joke.type === 'single') {
+      jokeText = joke.joke;
+    } else {
+      jokeText = `${joke.setup}\n${joke.delivery}`;
+    }
+    
+    res.json({
+      success: true,
+      joke: jokeText,
+      category: joke.category,
+      type: joke.type
+    });
+  } catch (error) {
+    console.error('Error fetching joke:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch joke',
+      error: error.message
+    });
+  }
+});
+
+// Get multiple random jokes
+app.get('/api/jokes/multiple/:count', async (req, res) => {
+  try {
+    const count = Math.min(parseInt(req.params.count) || 1, 10); // Max 10 jokes
+    
+    const jokes = [];
+    for (let i = 0; i < count; i++) {
+      const response = await axios.get('https://v2.jokeapi.dev/joke/Any');
+      const joke = response.data;
+      
+      let jokeText;
+      if (joke.type === 'single') {
+        jokeText = joke.joke;
+      } else {
+        jokeText = `${joke.setup}\n${joke.delivery}`;
+      }
+      
+      jokes.push({
+        joke: jokeText,
+        category: joke.category,
+        type: joke.type
+      });
+    }
+    
+    res.json({
+      success: true,
+      count: jokes.length,
+      jokes: jokes
+    });
+  } catch (error) {
+    console.error('Error fetching jokes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch jokes',
+      error: error.message
+    });
+  }
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Joke Generator API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to Joke Generator API',
+    endpoints: {
+      'GET /api/joke/random': 'Get a random joke',
+      'GET /api/joke/:category': 'Get a joke by category (any, misc, programming, knock-knock)',
+      'GET /api/jokes/multiple/:count': 'Get multiple random jokes',
+      'GET /health': 'Health check',
+      'GET /': 'API information'
+    }
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Endpoint not found'
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🎭 Joke Generator API running on http://localhost:${PORT}`);
+  console.log(`📡 Use 'curl http://localhost:${PORT}/api/joke/random' to get a joke`);
+});
