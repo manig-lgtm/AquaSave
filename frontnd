@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎭 Joke Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Joke Generator</h1>
+            <p class="subtitle">Get a laugh instantly!</p>
+        </div>
+
+        <div class="card">
+            <!-- Category Selection -->
+            <div class="category-section">
+                <label for="category">Choose Category:</label>
+                <select id="category">
+                    <option value="any">Any Joke</option>
+                    <option value="misc">Miscellaneous</option>
+                    <option value="programming">Programming</option>
+                    <option value="knock-knock">Knock-Knock</option>
+                </select>
+            </div>
+
+            <!-- Joke Display Area -->
+            <div class="joke-container">
+                <div id="jokeText" class="joke-text">
+                    👉 Click "Get Joke" to start laughing!
+                </div>
+                <div id="jokeInfo" class="joke-info" style="display: none;">
+                    <span id="jokeCategory" class="badge"></span>
+                    <span id="jokeType" class="badge"></span>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="spinner" class="spinner" style="display: none;"></div>
+
+            <!-- Button Section -->
+            <div class="button-group">
+                <button id="getJokeBtn" class="btn btn-primary">
+                    <span class="btn-text">Get Joke</span>
+                </button>
+                <button id="copyBtn" class="btn btn-secondary" title="Copy to clipboard">
+                    📋 Copy
+                </button>
+                <button id="shareBtn" class="btn btn-secondary" title="Share on social media">
+                    📤 Share
+                </button>
+            </div>
+
+            <!-- Multiple Jokes Section -->
+            <div class="multiple-jokes-section">
+                <label for="jokeCount">Get Multiple Jokes:</label>
+                <div class="input-group">
+                    <input type="number" id="jokeCount" min="1" max="10" value="3" placeholder="How many jokes?">
+                    <button id="getMultipleBtn" class="btn btn-primary">Get Jokes</button>
+                </div>
+            </div>
+
+            <!-- Multiple Jokes Display -->
+            <div id="multipleJokesContainer" style="display: none;">
+                <h2>🎉 Here are your jokes:</h2>
+                <div id="jokesList" class="jokes-list"></div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMsg" class="error-message" style="display: none;"></div>
+
+            <!-- Status Message -->
+            <div id="statusMsg" class="status-message" style="display: none;"></div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-card">
+            <div class="stat">
+                <div class="stat-number" id="jokeCount">0</div>
+                <div class="stat-label">Jokes Loaded</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="categoryCount">4</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Laughs</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Powered by <a href="https://jokeapi.dev/" target="_blank">JokeAPI</a> | Made with ❤️ by AquaSave</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
